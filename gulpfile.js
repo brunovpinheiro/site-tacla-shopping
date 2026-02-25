@@ -30,13 +30,13 @@ const buildLibsCss = () => {
 		.pipe(
 			sass({
 				api: "modern",
-			}).on("error", sass.logError)
+			}).on("error", sass.logError),
 		)
 		.pipe(concat("libs.css"))
 		.pipe(
 			uglifycss({
 				uglyComments: true,
-			})
+			}),
 		)
 		.pipe(rename("libs.min.css"))
 		.pipe(dest("./dist/css", { sourcemaps: true }));
@@ -48,16 +48,17 @@ const scssToCss = () => {
 		.pipe(
 			sass({
 				api: "modern",
-			}).on("error", sass.logError)
+			}).on("error", sass.logError),
 		)
 		.pipe(concat("style.css"))
 		.pipe(
 			uglifycss({
 				uglyComments: true,
-			})
+			}),
 		)
 		.pipe(rename("style.min.css"))
-		.pipe(dest("./dist/css", { sourcemaps: true }));
+		.pipe(dest("./dist/css", { sourcemaps: true }))
+		.pipe(browserSync.stream());
 };
 
 // Minificar JS comum
@@ -75,7 +76,7 @@ const minifyPagesJs = () => {
 		.pipe(
 			rename(function (path) {
 				path.basename = path.basename + ".min";
-			})
+			}),
 		)
 		.pipe(dest("./dist/js/pages", { sourcemaps: true }));
 };

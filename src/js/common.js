@@ -81,7 +81,7 @@ var swiper = new Swiper(".swiper_products-featured", {
 });
 
 var swiperGallery = new Swiper(".product-gallery", {
-	slidesPerView: "auto",
+	slidesPerView: 1,
 	spaceBetween: 0,
 	loop: false,
 	createElements: true,
@@ -89,6 +89,12 @@ var swiperGallery = new Swiper(".product-gallery", {
 	navigation: {
 		nextEl: ".btn-gallery_left",
 		prevEl: ".btn-gallery_right",
+	},
+	breakpoints: {
+		768: {
+			slidesPerView: "auto",
+			spaceBetween: 0,
+		},
 	},
 });
 
