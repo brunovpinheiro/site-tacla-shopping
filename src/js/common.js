@@ -82,7 +82,7 @@ var swiper = new Swiper(".swiper_products-featured", {
 
 var swiperGallery = new Swiper(".product-gallery", {
 	slidesPerView: 1,
-	spaceBetween: 0,
+	spaceBetween: 16,
 	loop: false,
 	createElements: true,
 	watchSlidesProgress: true,

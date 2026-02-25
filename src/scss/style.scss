@@ -149,7 +149,7 @@ html.lenis body {
 		break-inside: avoid;
 		margin-bottom: 8px;
 	}
-	@media (min-width: 768px) {
+	@media screen and (min-width: 768px) {
 		column-count: 3;
 		column-gap: 64px;
 	}
