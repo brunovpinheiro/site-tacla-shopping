@@ -1,27 +1,27 @@
-# Ominic Website
+# Tacla Shopping Website
 
-Site oficial da Ominic.
+Site oficial do Tacla Shopping.
 
 ## Desenvolvimento
 
-Este projeto foi desenvolvido pela [UWEX Design](https://uwex.com.br), agência especializada em desenvolvimento web e design digital.
+Este projeto foi desenvolvido pela equipe interna do **Tacla Labs**.
 
 ## Tecnologias Utilizadas
 
 - HTML5
 - CSS3 / SCSS
 - JavaScript
-- Gulp (Build automation)
-- Lenis (Smooth scroll)
+- Gulp (Automação de build)
+- Lenis (Scroll suave)
 - Fancybox (Lightbox)
 
 ## Contato
 
-**UWEX Design**
+**Tacla Labs**
 
-- Website: [uwex.com.br](https://uwex.com.br)
-- Email: contato@uwex.com.br
+- Website: [taclashopping.com.br](https://taclashopping.com.br)
+- Email: contato@taclashopping.com.br
 
 ## Licença
 
-Todos os direitos reservados © 2025 UWEX Design.
+Todos os direitos reservados © 2025 Tacla Labs.
