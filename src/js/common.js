@@ -65,7 +65,7 @@ window.addEventListener("DOMContentLoaded", function () {
 						wfIx.emit("timeline-inactive");
 						setTimeout(function () {
 							wfIx.emit("timeline-active");
-						}, 800);
+						}, 850);
 					}
 				},
 			},
