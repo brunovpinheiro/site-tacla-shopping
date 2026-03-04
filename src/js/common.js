@@ -45,6 +45,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		var isTimelineTransitioning = false;
 
 		function emitWfEvent(name) {
+			if (window.innerWidth <= 767) return;
 			if (typeof Webflow !== "undefined" && Webflow.require) {
 				Webflow.require("ix3").emit(name);
 			}
