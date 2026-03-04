@@ -1,8 +1,12 @@
 window.addEventListener("DOMContentLoaded", function () {
+	// IMAGES HERO
+	const heroSection = document.querySelector(".section-hero");
+	const heroCards = document.querySelectorAll(".hero_image-list .hero_image-wrapper");
+
 	// LENIS
 	if (typeof Lenis !== "undefined") {
 		const lenis = new Lenis({
-			lerp: 0.07,
+			lerp: 0.05,
 			anchors: true,
 		});
 
@@ -12,6 +16,11 @@ window.addEventListener("DOMContentLoaded", function () {
 				lenis.raf(time * 1000);
 			});
 			gsap.ticker.lagSmoothing(0);
+
+			window.addEventListener("load", function () {
+				ScrollTrigger.refresh();
+				lenis.resize();
+			});
 		} else {
 			function raf(time) {
 				lenis.raf(time);
@@ -20,62 +29,113 @@ window.addEventListener("DOMContentLoaded", function () {
 			requestAnimationFrame(raf);
 		}
 
-		const heroSection = document.querySelector(".section-hero");
 		if (heroSection) {
 			lenis.on("scroll", function () {
 				const rect = heroSection.getBoundingClientRect();
 				const isInHero = rect.top < window.innerHeight && rect.bottom > 0;
-				lenis.options.lerp = isInHero ? 0.03 : 0.07;
+				lenis.options.lerp = isInHero ? 0.03 : 0.05;
 			});
 		}
 	}
+
 	// TIMELINE HOME
 	if (typeof Swiper !== "undefined") {
-		var timelineYears = new Swiper(".timeline-years", {
-			direction: "vertical",
-			slidesPerView: 6,
+		var TIMELINE_EXIT_DURATION = 600;
+		var TIMELINE_ENTER_DURATION = 800;
+		var isTimelineTransitioning = false;
+
+		function emitWfEvent(name) {
+			if (typeof Webflow !== "undefined" && Webflow.require) {
+				Webflow.require("ix3").emit(name);
+			}
+		}
+
+		var timelineYears;
+		var timelineEvents;
+
+		function updateThumbActive(index) {
+			if (!timelineYears || !timelineYears.slides) return;
+
+			timelineYears.slides.forEach(function (slide, i) {
+				slide.classList.toggle("swiper-slide-thumb-active", i === index);
+			});
+
+			timelineYears.slideTo(index);
+		}
+
+		function changeTimelineSlide(targetIndex) {
+			if (isTimelineTransitioning || !timelineEvents || !timelineEvents.slides || targetIndex < 0 || targetIndex >= timelineEvents.slides.length || targetIndex === timelineEvents.activeIndex) {
+				return;
+			}
+
+			isTimelineTransitioning = true;
+
+			// 1. Atualiza anos imediatamente + animação de saída
+			updateThumbActive(targetIndex);
+			emitWfEvent("timeline-item-inactive");
+
+			setTimeout(function () {
+				// 2. Troca slide
+				timelineEvents.slideTo(targetIndex);
+
+				// 3. Animação de entrada
+				emitWfEvent("timeline-item-active");
+
+				// 4. Libera nova transição
+				setTimeout(function () {
+					isTimelineTransitioning = false;
+				}, TIMELINE_ENTER_DURATION);
+			}, TIMELINE_EXIT_DURATION);
+		}
+
+		// Swiper dos anos
+		timelineYears = new Swiper(".timeline-years", {
+			slidesPerView: "auto",
 			spaceBetween: 0,
-			freeMode: true,
+			centeredSlides: true,
 			watchSlidesProgress: true,
-			navigation: {
-				nextEl: ".hero-btn-next",
-				prevEl: ".hero-btn-prev",
+			on: {
+				click: function (swiper) {
+					changeTimelineSlide(swiper.clickedIndex);
+				},
 			},
 		});
-		new Swiper(".timeline-events", {
+
+		// Swiper dos eventos
+		timelineEvents = new Swiper(".timeline-events", {
 			slidesPerView: 1,
-			loop: true,
-			spaceBetween: 0,
+			spaceBetween: 10,
 			speed: 0,
-			thumbs: {
-				swiper: timelineYears,
-			},
+			allowTouchMove: false,
+			watchSlidesProgress: true,
+			preventInteractionOnTransition: true,
 			on: {
 				init: function () {
-					setTimeout(function () {
-						if (typeof Webflow !== "undefined") {
-							const wfIx = Webflow.require("ix3");
-							wfIx.emit("timeline-active");
-						}
-					}, 100);
-				},
-				slideChange: function () {
-					if (typeof Webflow !== "undefined") {
-						const wfIx = Webflow.require("ix3");
-						wfIx.emit("timeline-inactive");
-						setTimeout(function () {
-							wfIx.emit("timeline-active");
-						}, 850);
-					}
+					updateThumbActive(0);
+					window.addEventListener("load", function () {
+						emitWfEvent("timeline-item-active");
+					});
 				},
 			},
 		});
+
+		var nextBtn = document.querySelector(".timeline-nav_button.is-next");
+		var prevBtn = document.querySelector(".timeline-nav_button.is-prev");
+
+		if (nextBtn) {
+			nextBtn.addEventListener("click", function () {
+				changeTimelineSlide(timelineEvents.activeIndex + 1);
+			});
+		}
+
+		if (prevBtn) {
+			prevBtn.addEventListener("click", function () {
+				changeTimelineSlide(timelineEvents.activeIndex - 1);
+			});
+		}
 	}
 
-	// IMAGES HERO
-	const heroSection = document.querySelector(".section-hero");
-	const heroCards = document.querySelectorAll(".hero_image-list .hero_image-wrapper");
-
+	// IMAGES HERO — parallax on mousemove
 	if (typeof gsap !== "undefined" && heroSection && heroCards.length) {
 		const depths = [0.012, 0.02, 0.03, 0.018, 0.025, 0.015];
 

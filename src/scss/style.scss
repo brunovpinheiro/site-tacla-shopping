@@ -12,3 +12,11 @@ html.lenis body {
 .no-home .nav_menu {
 	display: none !important;
 }
+
+// .timeline-years .swiper-wrapper .swiper-slide {
+// 	width: 20%;
+// }
+
+.timeline-years .swiper-wrapper .swiper-slide.swiper-slide-thumb-active .year-item {
+	opacity: 1;
+}
