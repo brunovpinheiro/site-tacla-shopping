@@ -344,13 +344,11 @@ window.addEventListener("DOMContentLoaded", function () {
 	const heroForNavbar = document.querySelector(".section-hero");
 
 	if (navbar) {
-		const heroBottom = heroForNavbar
-			? heroForNavbar.offsetTop + heroForNavbar.offsetHeight
-			: 80;
-
 		function updateNavbar() {
-			const scrollY = lenis ? lenis.animatedScroll : window.scrollY;
-			navbar.classList.toggle("is-scrolled", scrollY >= heroBottom);
+			const isPastHero = heroForNavbar
+				? heroForNavbar.getBoundingClientRect().bottom <= 0
+				: window.scrollY > 80;
+			navbar.classList.toggle("is-scrolled", isPastHero);
 		}
 
 		if (lenis) {
