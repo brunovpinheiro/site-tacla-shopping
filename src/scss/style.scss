@@ -43,3 +43,12 @@ html.lenis body {
 .newlogo-video-wrapper video {
 	margin-bottom: -8px;
 }
+
+// NAVBAR — Fade na cor de fundo
+.navbar {
+	transition: background-color 0.4s ease;
+
+	&.is-scrolled {
+		background-color: #002256;
+	}
+}

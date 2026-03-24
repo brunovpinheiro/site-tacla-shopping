@@ -101,20 +101,45 @@ window.addEventListener("DOMContentLoaded", function () {
 	}
 
 	// ============================================================
-	// TIMELINE — Swiper + Webflow Interactions
+	// TIMELINE — Swiper
 	// ============================================================
 	if (typeof Swiper !== "undefined") {
-		const TIMELINE_EXIT_DURATION = 600;
-		const TIMELINE_ENTER_DURATION = 800;
-		let isTimelineTransitioning = false;
 		let timelineYears, timelineEvents;
 		const isMobile = window.innerWidth <= 767;
+		let timelineAnimating = false;
 
-		function emitWfEvent(name, force = false) {
-			if (!force && window.innerWidth <= 767) return;
-			if (typeof Webflow !== "undefined" && Webflow.require) {
-				Webflow.require("ix3").emit(name);
+		const FADE_DURATION = 0.3;
+		const FADE_EASE = "power2.inOut";
+
+		function getSlideTargets(slide) {
+			return [
+				...slide.querySelectorAll(".timeline-content_midia"),
+				...slide.querySelectorAll(".timeline-content_texts"),
+			];
+		}
+
+		function fadeInSlide(slide) {
+			const targets = getSlideTargets(slide);
+			if (!targets.length) return;
+			gsap.fromTo(
+				targets,
+				{ opacity: 0 },
+				{ opacity: 1, duration: FADE_DURATION, ease: FADE_EASE, stagger: 0.06 }
+			);
+		}
+
+		function fadeOutSlide(slide, onComplete) {
+			const targets = getSlideTargets(slide);
+			if (!targets.length) {
+				onComplete?.();
+				return;
 			}
+			gsap.to(targets, {
+				opacity: 0,
+				duration: FADE_DURATION,
+				ease: FADE_EASE,
+				onComplete,
+			});
 		}
 
 		function updateThumbActive(index) {
@@ -129,27 +154,15 @@ window.addEventListener("DOMContentLoaded", function () {
 			if (!timelineEvents?.slides) return;
 			if (targetIndex < 0 || targetIndex >= timelineEvents.slides.length) return;
 			if (targetIndex === timelineEvents.activeIndex) return;
+			if (timelineAnimating) return;
 
-			// Mobile: sem animações IX3, troca direta e imediata
-			if (isMobile) {
+			timelineAnimating = true;
+			const currentSlide = timelineEvents.slides[timelineEvents.activeIndex];
+
+			fadeOutSlide(currentSlide, () => {
 				updateThumbActive(targetIndex);
 				timelineEvents.slideTo(targetIndex);
-				return;
-			}
-
-			// Desktop: transição com animações Webflow IX3
-			if (isTimelineTransitioning) return;
-			isTimelineTransitioning = true;
-			updateThumbActive(targetIndex);
-			emitWfEvent("timeline-item-inactive");
-
-			setTimeout(() => {
-				timelineEvents.slideTo(targetIndex);
-				emitWfEvent("timeline-item-active");
-				setTimeout(() => {
-					isTimelineTransitioning = false;
-				}, TIMELINE_ENTER_DURATION);
-			}, TIMELINE_EXIT_DURATION);
+			});
 		}
 
 		timelineYears = new Swiper(".timeline-years", {
@@ -163,7 +176,6 @@ window.addEventListener("DOMContentLoaded", function () {
 						changeTimelineSlide(swiper.clickedIndex);
 					}
 				},
-				// Mobile: swipe nos anos sincroniza os eventos
 				slideChangeTransitionEnd: (swiper) => {
 					if (isMobile) changeTimelineSlide(swiper.activeIndex);
 				},
@@ -173,20 +185,28 @@ window.addEventListener("DOMContentLoaded", function () {
 		timelineEvents = new Swiper(".timeline-events", {
 			slidesPerView: 1,
 			spaceBetween: 10,
-			speed: isMobile ? 300 : 0,
-			allowTouchMove: isMobile, // Habilita arrasto apenas no mobile
+			speed: 300,
+			allowTouchMove: isMobile,
 			watchSlidesProgress: true,
-			preventInteractionOnTransition: true,
 			on: {
-			init: () => {
-				updateThumbActive(0);
-				// force: true garante que o estado inicial "active" seja aplicado no mobile também,
-				// já que o IX3 define os slides em estado oculto antes dessa emissão.
-				window.addEventListener("load", () => emitWfEvent("timeline-item-active", true));
-			},
-				// Mobile: swipe nos eventos sincroniza os anos
-				slideChange: (swiper) => {
+				init: (swiper) => {
+					updateThumbActive(0);
+					swiper.slides.forEach((slide, i) => {
+						gsap.set(getSlideTargets(slide), { opacity: 0 });
+					});
+					const firstSlide = swiper.slides[0];
+					if (firstSlide) fadeInSlide(firstSlide);
+				},
+				slideChangeTransitionStart: (swiper) => {
 					if (isMobile) updateThumbActive(swiper.activeIndex);
+				},
+				slideChangeTransitionEnd: (swiper) => {
+					const activeSlide = swiper.slides[swiper.activeIndex];
+					if (activeSlide) {
+						gsap.set(getSlideTargets(activeSlide), { opacity: 0 });
+						fadeInSlide(activeSlide);
+					}
+					timelineAnimating = false;
 				},
 			},
 		});
@@ -206,100 +226,87 @@ window.addEventListener("DOMContentLoaded", function () {
 
 	if (transformItems.length && transformSlides.length && typeof gsap !== "undefined") {
 		transformSlides.forEach((slide, i) => {
-			gsap.set(slide, { yPercent: i === 0 ? 0 : 100, opacity: i === 0 ? 1 : 0, zIndex: i, force3D: false });
+			gsap.set(slide, { yPercent: i === 0 ? 0 : 100, opacity: i === 0 ? 1 : 0, zIndex: i });
 		});
 
 		transformItems.forEach((item) => gsap.set(item, { opacity: 0.35 }));
 
 		let currentIndex = 0;
+		let targetIndex = 0;
+		let isAnimating = false;
 		const onMobile = window.matchMedia("(max-width: 991px)").matches;
-		let activeTl = null;
 
-		function setActiveImage(nextIndex) {
-			if (nextIndex === currentIndex) return;
+		function getTargetSlideIndex() {
+			const viewportMid = window.innerHeight / 2;
+			let closestItemIndex = 0;
+			let closestDist = Infinity;
 
-			if (activeTl) activeTl.kill();
+			transformItems.forEach((item, i) => {
+				const rect = item.getBoundingClientRect();
+				const dist = Math.abs(rect.top + rect.height / 2 - viewportMid);
+				if (dist < closestDist) {
+					closestDist = dist;
+					closestItemIndex = i;
+				}
+			});
 
+			const firstRect = transformItems[0]?.getBoundingClientRect();
+			return firstRect && firstRect.top > viewportMid ? 0 : closestItemIndex + 1;
+		}
+
+		function animateStep() {
+			if (currentIndex === targetIndex) {
+				isAnimating = false;
+				return;
+			}
+
+			isAnimating = true;
+
+			const nextIndex = currentIndex < targetIndex ? currentIndex + 1 : currentIndex - 1;
 			const goingForward = nextIndex > currentIndex;
-			const prev = transformSlides[currentIndex];
-			const next = transformSlides[nextIndex];
-			const dur = onMobile ? 0.45 : 0.9;
 
-			activeTl = gsap.timeline({
-				defaults: { ease: "power3.inOut", force3D: false },
+			// Passos intermediários ainda na fila: usa duração reduzida para não atrasar demais
+			const stepsLeft = Math.abs(targetIndex - nextIndex);
+			const dur = stepsLeft > 0 ? (onMobile ? 0.25 : 0.4) : (onMobile ? 0.45 : 0.75);
+
+			const tl = gsap.timeline({
+				defaults: { ease: "power3.inOut" },
 				onComplete: () => {
-					activeTl = null;
+					currentIndex = nextIndex;
+					animateStep();
 				},
 			});
 
 			if (goingForward) {
-				gsap.set(next, { yPercent: 100, opacity: 0, zIndex: nextIndex, force3D: false });
-				activeTl.to(next, { yPercent: 0, opacity: 1, duration: dur }, 0);
+				gsap.set(transformSlides[nextIndex], { yPercent: 100, opacity: 0, zIndex: nextIndex });
+				tl.to(transformSlides[nextIndex], { yPercent: 0, opacity: 1, duration: dur });
 			} else {
-				gsap.set(prev, { zIndex: currentIndex, force3D: false });
-				activeTl.to(prev, { yPercent: 100, opacity: 0, duration: dur }, 0);
+				gsap.set(transformSlides[nextIndex], { yPercent: 0, opacity: 1, zIndex: nextIndex });
+				tl.to(transformSlides[currentIndex], { yPercent: 100, opacity: 0, duration: dur });
 			}
 
-			const prevItemIdx = currentIndex - 1;
-			const nextItemIdx = nextIndex - 1;
-			if (prevItemIdx >= 0 && transformItems[prevItemIdx]) {
-				activeTl.to(transformItems[prevItemIdx], { opacity: 0.35, duration: dur * 0.55 }, 0);
-			}
-			if (nextItemIdx >= 0 && transformItems[nextItemIdx]) {
-				activeTl.to(transformItems[nextItemIdx], { opacity: 1, duration: dur * 0.55 }, 0);
-			}
+			transformItems.forEach((item, i) => {
+				tl.to(item, { opacity: i === nextIndex - 1 ? 1 : 0.35, duration: dur * 0.55 }, 0);
+			});
+		}
 
-			currentIndex = nextIndex;
+		function handleScroll() {
+			const newTarget = getTargetSlideIndex();
+			if (newTarget !== targetIndex) {
+				targetIndex = newTarget;
+				if (!isAnimating) {
+					animateStep();
+				}
+			}
 		}
 
 		if (onMobile) {
-			function handleMobileScroll() {
-				const viewportMid = window.innerHeight / 2;
-				let closestItemIndex = 0;
-				let closestDist = Infinity;
-
-				transformItems.forEach((item, i) => {
-					const rect = item.getBoundingClientRect();
-					const dist = Math.abs(rect.top + rect.height / 2 - viewportMid);
-					if (dist < closestDist) {
-						closestDist = dist;
-						closestItemIndex = i;
-					}
-				});
-
-				const firstRect = transformItems[0]?.getBoundingClientRect();
-				const targetSlideIndex = firstRect && firstRect.top > viewportMid ? 0 : closestItemIndex + 1;
-
-				setActiveImage(targetSlideIndex);
-			}
-
-			window.addEventListener("scroll", handleMobileScroll, { passive: true });
-			handleMobileScroll();
+			window.addEventListener("scroll", handleScroll, { passive: true });
 		} else {
-			if (!lenis && typeof Lenis !== "undefined") {
-				lenis = new Lenis({ autoRaf: true });
-			}
-
-			lenis?.on("scroll", () => {
-				const viewportMid = window.innerHeight / 2;
-				let closestItemIndex = 0;
-				let closestDist = Infinity;
-
-				transformItems.forEach((item, i) => {
-					const rect = item.getBoundingClientRect();
-					const dist = Math.abs(rect.top + rect.height / 2 - viewportMid);
-					if (dist < closestDist) {
-						closestDist = dist;
-						closestItemIndex = i;
-					}
-				});
-
-				const firstRect = transformItems[0]?.getBoundingClientRect();
-				const targetSlideIndex = firstRect && firstRect.top > viewportMid ? 0 : closestItemIndex + 1;
-
-				setActiveImage(targetSlideIndex);
-			});
+			lenis?.on("scroll", handleScroll);
 		}
+
+		handleScroll();
 	}
 
 	// ============================================================
@@ -335,5 +342,25 @@ window.addEventListener("DOMContentLoaded", function () {
 				if (allSymbols.length) gsap.to(allSymbols, { opacity: 1, duration: 0.6, ease: "power2.in" });
 			});
 		});
+	}
+
+	// ============================================================
+	// NAVBAR — Cor de fundo ao rolar
+	// ============================================================
+	const navbar = document.querySelector(".navbar");
+	const heroForNavbar = document.querySelector(".section-hero");
+	if (navbar) {
+		function updateNavbar() {
+			const heroVisible = heroForNavbar && heroForNavbar.getBoundingClientRect().bottom > 0;
+			navbar.classList.toggle("is-scrolled", !heroVisible);
+		}
+
+		if (lenis) {
+			lenis.on("scroll", updateNavbar);
+		} else {
+			window.addEventListener("scroll", updateNavbar, { passive: true });
+		}
+
+		updateNavbar();
 	}
 });
