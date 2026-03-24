@@ -13,10 +13,33 @@ html.lenis body {
 	display: none !important;
 }
 
-// .timeline-years .swiper-wrapper .swiper-slide {
-// 	width: 20%;
-// }
-
+// TIMELINE SECTION ================================
 .timeline-years .swiper-wrapper .swiper-slide.swiper-slide-thumb-active .year-item {
 	opacity: 1;
+}
+
+// TRANSFORM SECTION ================================
+.transform-list_item:last-child {
+	margin-bottom: 0;
+}
+
+@media (max-width: 991px) {
+	.transform-media {
+		position: sticky;
+		top: 5rem;
+		z-index: 10;
+		width: 100%;
+		height: 60vw;
+		max-height: 30vh;
+	}
+
+	.transform-media-inner {
+		height: 100%;
+		overflow: hidden;
+	}
+}
+
+// NEW LOGO SECTION ================================
+.newlogo-video-wrapper video {
+	margin-bottom: -8px;
 }

@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "skills": {
+    "accessibility-audit": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "d76f378083037b87b644c401f85a5715b54982243f45238e13c0d0f82794c869"
+    },
+    "asset-audit": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "b6519424b968c039b26546471c5868328717a801f7b0f2f99e9aa7fa88563377"
+    },
+    "bulk-cms-update": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "127d40f85d4e4d5538e05a9417bcf46776a6f0fdad8d0732323d8f59807e1fa7"
+    },
+    "cms-best-practices": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "c5593f08e4e1272401808809f58069f918ef297c16caef4514b32f983e39f33a"
+    },
+    "cms-collection-setup": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "c4c0b8d414a40394c3046ef3c2887ba0bb3a13eb2eb5fb69b40b1073954d3a8e"
+    },
+    "custom-code-management": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "97feefb90022699db5f7f3575f32f191db4dd6543e6487bb47cd011abd57468c"
+    },
+    "flowkit-naming": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "57768073859fdd7832e10b325a97475bfa78c9a460fcd2a54c6bbb1249e04e26"
+    },
+    "link-checker": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "ba565d655a365a19710c28a5d54b615f2e33d51ece271a6f0b17d59885d2d304"
+    },
+    "safe-publish": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "0da7b7205b0bc49f89d58b4f9ef68423d07e29e7787d2f859e6946947ce34036"
+    },
+    "site-audit": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "6879db5197c31b057b9c49fc62cb33ed04cabb67e1604ea68d251a4b4f2b86d0"
+    },
+    "webflow-cli:cloud": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "34f2b7fa2d76bfc8d5d0aa1a30e5c09c35aaf78b5a77d242967c61b714b14ca6"
+    },
+    "webflow-cli:code-component": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "a04027ac7365606482b40030836ba76efcf08d9604001b58e50571fd8d80321c"
+    },
+    "webflow-cli:designer-extension": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "b193094bbce357901d4c9b60175e297216bccfb964cc43f8b1e3f929a9b7d7e5"
+    },
+    "webflow-cli:devlink": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "429100009e753191c05061cc4382997f91c5b6e20c8f9d221e7e56b172c7c3d6"
+    },
+    "webflow-cli:troubleshooter": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "dc6b712d69593c831047f6541d6266b59579eeb43d3e49a03df560517fb62ce5"
+    },
+    "webflow-code-component:component-audit": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "e2a6b5674e6bc9679425334d936dbf76a75a984370b5e84962b61344e7a641f5"
+    },
+    "webflow-code-component:component-scaffold": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "6a4817545dc6cbf3b9ce51df4dc6f82fde0ceab4a808290aaa6339852a8b0be5"
+    },
+    "webflow-code-component:convert-component": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "04e0c8f978db2b682fd921558ab3d3ab9c8e673d9da2c06c11693463b5852043"
+    },
+    "webflow-code-component:deploy-guide": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "0902f0a412541e853aa42827dae72d6826a548abc5cd4c63d330e67c8fda83d5"
+    },
+    "webflow-code-component:local-dev-setup": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "481917ee04bbc09fb66b483e47d061f495e4b181032dc16ea18857ac787aef7d"
+    },
+    "webflow-code-component:pre-deploy-check": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "1f994d7e20d3318a21c4dd06766e4cebb1527784f0855c9e1601808209918deb"
+    },
+    "webflow-code-component:troubleshoot-deploy": {
+      "source": "webflow/webflow-skills",
+      "sourceType": "github",
+      "computedHash": "1d743934999daef47c17c830553554d586a32bec93398be979a9cb2da8f0ee41"
+    }
+  }
+}
