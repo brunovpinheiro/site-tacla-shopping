@@ -112,20 +112,13 @@ window.addEventListener("DOMContentLoaded", function () {
 		const FADE_EASE = "power2.inOut";
 
 		function getSlideTargets(slide) {
-			return [
-				...slide.querySelectorAll(".timeline-content_midia"),
-				...slide.querySelectorAll(".timeline-content_texts"),
-			];
+			return [...slide.querySelectorAll(".timeline-content_midia"), ...slide.querySelectorAll(".timeline-content_texts")];
 		}
 
 		function fadeInSlide(slide) {
 			const targets = getSlideTargets(slide);
 			if (!targets.length) return;
-			gsap.fromTo(
-				targets,
-				{ opacity: 0 },
-				{ opacity: 1, duration: FADE_DURATION, ease: FADE_EASE, stagger: 0.06 }
-			);
+			gsap.fromTo(targets, { opacity: 0 }, { opacity: 1, duration: FADE_DURATION, ease: FADE_EASE, stagger: 0.06 });
 		}
 
 		function fadeOutSlide(slide, onComplete) {
@@ -267,7 +260,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 			// Passos intermediários ainda na fila: usa duração reduzida para não atrasar demais
 			const stepsLeft = Math.abs(targetIndex - nextIndex);
-			const dur = stepsLeft > 0 ? (onMobile ? 0.25 : 0.4) : (onMobile ? 0.45 : 0.75);
+			const dur = stepsLeft > 0 ? (onMobile ? 0.25 : 0.4) : onMobile ? 0.45 : 0.75;
 
 			const tl = gsap.timeline({
 				defaults: { ease: "power3.inOut" },
