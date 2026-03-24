@@ -5,6 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "gulp build",
+		"deploy": "gulp deploy",
+		"purge": "gulp purge",
 		"start": "gulp"
 	},
 	"keywords": [],

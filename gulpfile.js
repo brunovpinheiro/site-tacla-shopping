@@ -5,6 +5,7 @@ const rename = require("gulp-rename");
 const terser = require("gulp-terser");
 const concat = require("gulp-concat");
 const browserSync = require("browser-sync").create();
+const https = require("https");
 
 // Configuração das bibliotecas de terceiros
 const libsConfig = {
@@ -120,5 +121,36 @@ const watchFiles = () => {
 	watch(libsConfig.css, buildLibsCss);
 };
 
+// Purgar cache do JSDelivr
+const purgeUrls = [
+	"https://purge.jsdelivr.net/gh/brunovpinheiro/site-tacla-shopping/dist/js/common.min.js",
+	"https://purge.jsdelivr.net/gh/brunovpinheiro/site-tacla-shopping/dist/css/style.min.css",
+];
+
+const purgeJsDelivr = (cb) => {
+	let completed = 0;
+
+	purgeUrls.forEach((url) => {
+		https
+			.get(url, (res) => {
+				const file = url.split("/").pop();
+				if (res.statusCode === 200) {
+					console.log(`✅ Cache purgado: ${file}`);
+				} else {
+					console.warn(`⚠️  Resposta inesperada (${res.statusCode}): ${file}`);
+				}
+				completed++;
+				if (completed === purgeUrls.length) cb();
+			})
+			.on("error", (err) => {
+				console.error(`❌ Erro ao purgar cache: ${err.message}`);
+				completed++;
+				if (completed === purgeUrls.length) cb();
+			});
+	});
+};
+
+exports.purge = purgeJsDelivr;
 exports.build = series(buildLibsJs, buildLibsCss, scssToCss, minifyCommonJs, minifyPagesJs);
+exports.deploy = series(buildLibsJs, buildLibsCss, scssToCss, minifyCommonJs, minifyPagesJs, purgeJsDelivr);
 exports.default = series(buildLibsJs, buildLibsCss, scssToCss, minifyCommonJs, minifyPagesJs, serve, watchFiles);
