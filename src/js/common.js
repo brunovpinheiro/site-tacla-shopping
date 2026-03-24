@@ -110,8 +110,8 @@ window.addEventListener("DOMContentLoaded", function () {
 		let timelineYears, timelineEvents;
 		const isMobile = window.innerWidth <= 767;
 
-		function emitWfEvent(name) {
-			if (window.innerWidth <= 767) return;
+		function emitWfEvent(name, force = false) {
+			if (!force && window.innerWidth <= 767) return;
 			if (typeof Webflow !== "undefined" && Webflow.require) {
 				Webflow.require("ix3").emit(name);
 			}
@@ -178,10 +178,12 @@ window.addEventListener("DOMContentLoaded", function () {
 			watchSlidesProgress: true,
 			preventInteractionOnTransition: true,
 			on: {
-				init: () => {
-					updateThumbActive(0);
-					window.addEventListener("load", () => emitWfEvent("timeline-item-active"));
-				},
+			init: () => {
+				updateThumbActive(0);
+				// force: true garante que o estado inicial "active" seja aplicado no mobile também,
+				// já que o IX3 define os slides em estado oculto antes dessa emissão.
+				window.addEventListener("load", () => emitWfEvent("timeline-item-active", true));
+			},
 				// Mobile: swipe nos eventos sincroniza os anos
 				slideChange: (swiper) => {
 					if (isMobile) updateThumbActive(swiper.activeIndex);
