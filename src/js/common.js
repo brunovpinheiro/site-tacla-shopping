@@ -342,10 +342,15 @@ window.addEventListener("DOMContentLoaded", function () {
 	// ============================================================
 	const navbar = document.querySelector(".navbar");
 	const heroForNavbar = document.querySelector(".section-hero");
+
 	if (navbar) {
+		const heroBottom = heroForNavbar
+			? heroForNavbar.offsetTop + heroForNavbar.offsetHeight
+			: 80;
+
 		function updateNavbar() {
-			const heroVisible = heroForNavbar && heroForNavbar.getBoundingClientRect().bottom > 0;
-			navbar.classList.toggle("is-scrolled", !heroVisible);
+			const scrollY = lenis ? lenis.animatedScroll : window.scrollY;
+			navbar.classList.toggle("is-scrolled", scrollY >= heroBottom);
 		}
 
 		if (lenis) {
