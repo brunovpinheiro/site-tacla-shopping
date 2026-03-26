@@ -49,9 +49,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Purge JSDelivr cache
-        run: |
-          curl -s "https://purge.jsdelivr.net/gh/brunovpinheiro/site-tacla-shopping/dist/js/common.min.js"
-          curl -s "https://purge.jsdelivr.net/gh/brunovpinheiro/site-tacla-shopping/dist/css/style.min.css"
-          echo "✅ Cache do JSDelivr purgado com sucesso"
