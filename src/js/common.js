@@ -340,6 +340,94 @@ window.addEventListener("DOMContentLoaded", function () {
 	}
 
 	// ============================================================
+	// FEATURES COMPONENT — Auto-rotação com barra de progresso
+	// ============================================================
+	const featuresComponent = document.querySelector(".features-component");
+
+	if (featuresComponent && typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
+		const featureItems = Array.from(featuresComponent.querySelectorAll(".feature-item"));
+		const featureImages = Array.from(featuresComponent.querySelectorAll(".feature-images_item"));
+
+		if (featureItems.length) {
+			const DURATION = 8;
+			let currentIndex = 0;
+			let progressTween = null;
+			let isStarted = false;
+
+			// Detecta a classe hash de variante do Webflow a partir do primeiro item ativo
+			const firstActiveProgress = featuresComponent.querySelector(
+				'.feature-item[data-wf--feature-item--variant="active"] .feature-item_progress'
+			);
+			const variantClass = firstActiveProgress
+				? Array.from(firstActiveProgress.classList).find((c) => c.startsWith("w-variant-"))
+				: null;
+
+			function setItemActive(item, active) {
+				item.setAttribute("data-wf--feature-item--variant", active ? "active" : "base");
+				if (variantClass) {
+					item.querySelector(".feature-item_progress")?.classList.toggle(variantClass, active);
+					item.querySelector(".feature-item_text-wrap")?.classList.toggle(variantClass, active);
+				}
+			}
+
+			function activateItem(arrayIndex) {
+				if (progressTween) progressTween.kill();
+
+				featureItems.forEach((item) => {
+					setItemActive(item, false);
+					const bar = item.querySelector(".feature-item_progress");
+					if (bar) gsap.set(bar, { width: "0%" });
+				});
+				featureImages.forEach((img) => img.classList.remove("is-active"));
+
+				currentIndex = arrayIndex;
+				const item = featureItems[currentIndex];
+				const dataIdx = parseInt(item.dataset.index, 10);
+				const image = featureImages.find((el) => parseInt(el.dataset.index, 10) === dataIdx);
+
+				setItemActive(item, true);
+				image?.classList.add("is-active");
+
+				const progressBar = item.querySelector(".feature-item_progress");
+				if (progressBar) {
+					progressTween = gsap.fromTo(
+						progressBar,
+						{ width: "0%" },
+						{
+							width: "100%",
+							duration: DURATION,
+							ease: "none",
+							onComplete: () => activateItem((currentIndex + 1) % featureItems.length),
+						}
+					);
+				}
+			}
+
+			featureItems.forEach((item, i) => {
+				item.addEventListener("click", () => {
+					if (i !== currentIndex) activateItem(i);
+				});
+			});
+
+			ScrollTrigger.create({
+				trigger: featuresComponent,
+				start: "top 70%",
+				onEnter: () => {
+					if (!isStarted) {
+						isStarted = true;
+						activateItem(0);
+					} else {
+						progressTween?.resume();
+					}
+				},
+				onLeave: () => progressTween?.pause(),
+				onEnterBack: () => progressTween?.resume(),
+				onLeaveBack: () => progressTween?.pause(),
+			});
+		}
+	}
+
+	// ============================================================
 	// NAVBAR — Cor de fundo ao rolar
 	// ============================================================
 	const navbar = document.querySelector(".navbar");
