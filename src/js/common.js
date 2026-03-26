@@ -12,6 +12,8 @@ window.addEventListener("DOMContentLoaded", function () {
 			anchors: true,
 		});
 
+		window.lenis = lenis;
+
 		if (typeof gsap !== "undefined" && typeof ScrollTrigger !== "undefined") {
 			lenis.on("scroll", ScrollTrigger.update);
 			gsap.ticker.add((time) => lenis.raf(time * 1000));
