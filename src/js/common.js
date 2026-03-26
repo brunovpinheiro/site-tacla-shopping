@@ -354,27 +354,11 @@ window.addEventListener("DOMContentLoaded", function () {
 			let progressTween = null;
 			let isStarted = false;
 
-			// Detecta a classe hash de variante do Webflow a partir do primeiro item ativo
-			const firstActiveProgress = featuresComponent.querySelector(
-				'.feature-item[data-wf--feature-item--variant="active"] .feature-item_progress'
-			);
-			const variantClass = firstActiveProgress
-				? Array.from(firstActiveProgress.classList).find((c) => c.startsWith("w-variant-"))
-				: null;
-
-			function setItemActive(item, active) {
-				item.setAttribute("data-wf--feature-item--variant", active ? "active" : "base");
-				if (variantClass) {
-					item.querySelector(".feature-item_progress")?.classList.toggle(variantClass, active);
-					item.querySelector(".feature-item_text-wrap")?.classList.toggle(variantClass, active);
-				}
-			}
-
 			function activateItem(arrayIndex) {
 				if (progressTween) progressTween.kill();
 
 				featureItems.forEach((item) => {
-					setItemActive(item, false);
+					item.classList.remove("active");
 					const bar = item.querySelector(".feature-item_progress");
 					if (bar) gsap.set(bar, { width: "0%" });
 				});
@@ -385,7 +369,7 @@ window.addEventListener("DOMContentLoaded", function () {
 				const dataIdx = parseInt(item.dataset.index, 10);
 				const image = featureImages.find((el) => parseInt(el.dataset.index, 10) === dataIdx);
 
-				setItemActive(item, true);
+				item.classList.add("active");
 				image?.classList.add("is-active");
 
 				const progressBar = item.querySelector(".feature-item_progress");
