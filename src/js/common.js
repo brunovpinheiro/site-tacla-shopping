@@ -5,7 +5,7 @@ window.addEventListener("DOMContentLoaded", function () {
 	let lenis;
 
 	if (typeof Lenis !== "undefined") {
-		const heroSection = document.querySelector(".section-hero");
+		const heroSection = document.querySelector('[data-hero="true"]');
 
 		lenis = new Lenis({
 			lerp: 0.05,
@@ -345,9 +345,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 	if (navbar) {
 		function updateNavbar() {
-			const isPastHero = heroForNavbar
-				? heroForNavbar.getBoundingClientRect().bottom <= 0
-				: window.scrollY > 80;
+			const isPastHero = heroForNavbar ? heroForNavbar.getBoundingClientRect().bottom <= 0 : window.scrollY > 80;
 			navbar.classList.toggle("is-scrolled", isPastHero);
 		}
 
