@@ -41,39 +41,6 @@ window.addEventListener("DOMContentLoaded", function () {
 	}
 
 	// ============================================================
-	// FANCYBOX — Integração com Lenis e suporte a HLS
-	// ============================================================
-	function initHlsVideo(slide) {
-		if (slide.type !== "html") return;
-
-		const videoEl = slide.el?.querySelector("video");
-		const src = slide.src;
-
-		if (!videoEl || !src?.endsWith(".m3u8")) return;
-
-		if (videoEl.canPlayType("application/vnd.apple.mpegurl")) {
-			videoEl.src = src;
-		} else if (window.Hls?.isSupported()) {
-			const hls = new Hls();
-			hls.loadSource(src);
-			hls.attachMedia(videoEl);
-			slide.hls = hls;
-		}
-	}
-
-	Fancybox.bind("[data-fancybox]", {
-		on: {
-			init: () => lenis?.stop(),
-			destroy: () => lenis?.start(),
-			"Carousel.createSlide": (fancybox, carousel, slide) => initHlsVideo(slide),
-			"Carousel.removeSlide": (fancybox, carousel, slide) => {
-				slide.hls?.destroy();
-				slide.hls = null;
-			},
-		},
-	});
-
-	// ============================================================
 	// HERO — Parallax no mouse
 	// ============================================================
 	const heroSection = document.querySelector(".section-hero");
