@@ -24,6 +24,13 @@ html.lenis body {
 .timeline-years .swiper-wrapper .swiper-slide.swiper-slide-thumb-active .year-item {
 	opacity: 1;
 }
+.timeline-years .swiper-wrapper .swiper-slide:first-child .year-item .year-marker .year-marker_line {
+	inset: 50%;
+	width: 50%;
+}
+.timeline-years .swiper-wrapper .swiper-slide:last-child .year-item .year-marker .year-marker_line {
+	width: 50%;
+}
 
 // TRANSFORM SECTION ================================
 .transform-list_item:last-child {
@@ -69,6 +76,22 @@ html.lenis body {
 		height: 100%;
 		z-index: 2;
 		background: url(https://cdn.prod.website-files.com/699c894f6ea1848bd8955d95/69c6769174719cdcbd30ace5_line-overlay.png) no-repeat center center / cover;
+	}
+}
+
+
+// FANCYBOX — Controles do player alinhados ao vídeo
+.fancybox__slide.has-html,
+.fancybox__slide.has-video {
+	.fancybox__content {
+		width: fit-content;
+		max-width: 90vw;
+
+		video {
+			display: block;
+			max-width: 100%;
+			max-height: 80vh;
+		}
 	}
 }
 
