@@ -9,8 +9,8 @@ const https = require("https");
 
 // Configuração das bibliotecas de terceiros
 const libsConfig = {
-	js: ["./src/js/lib/fancybox.js"], // Adicione aqui os caminhos dos arquivos JS das bibliotecas quando necessário
-	css: ["./src/scss/lib/fancybox.scss"],
+	js: ["./src/js/lib/mux-modal-player.js"], // Adicione aqui os caminhos dos arquivos JS das bibliotecas quando necessário
+	css: [],
 };
 
 // Concatenar e minificar bibliotecas JS
@@ -27,7 +27,11 @@ const buildLibsJs = (cb) => {
 };
 
 // Compilar bibliotecas SCSS para CSS
-const buildLibsCss = () => {
+const buildLibsCss = (cb) => {
+	if (libsConfig.css.length === 0) {
+		console.log("⚠️  Nenhuma biblioteca CSS configurada. Pulando buildLibsCss...");
+		return cb();
+	}
 	return src(libsConfig.css, { sourcemaps: true })
 		.pipe(
 			sass({
@@ -118,14 +122,13 @@ const watchFiles = () => {
 		watch(libsConfig.js, buildLibsJs);
 	}
 
-	watch(libsConfig.css, buildLibsCss);
+	if (libsConfig.css.length > 0) {
+		watch(libsConfig.css, buildLibsCss);
+	}
 };
 
 // Purgar cache do JSDelivr
-const purgeUrls = [
-	"https://purge.jsdelivr.net/gh/brunovpinheiro/site-tacla-shopping/dist/js/common.min.js",
-	"https://purge.jsdelivr.net/gh/brunovpinheiro/site-tacla-shopping/dist/css/style.min.css",
-];
+const purgeUrls = ["https://purge.jsdelivr.net/gh/brunovpinheiro/site-tacla-shopping/dist/js/common.min.js", "https://purge.jsdelivr.net/gh/brunovpinheiro/site-tacla-shopping/dist/css/style.min.css"];
 
 const purgeJsDelivr = (cb) => {
 	let completed = 0;
