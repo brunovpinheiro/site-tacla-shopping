@@ -392,7 +392,14 @@ if (featuresComponent && typeof gsap !== "undefined" && typeof ScrollTrigger !==
 			const image = featureImages.find((el) => parseInt(el.dataset.index, 10) === dataIdx);
 
 			item.classList.add("active");
-			image?.classList.add("is-active");
+
+			if (image) {
+				image.classList.add("is-active");
+				const mediaWrapper = image.querySelector(".feature-media_wrapper");
+				if (mediaWrapper) {
+					gsap.fromTo(mediaWrapper, { y: "20px", opacity: 0 }, { y: "0px", opacity: 1, duration: 0.6, ease: "power2.out" });
+				}
+			}
 
 			const progressBar = item.querySelector(".feature-item_progress");
 			if (progressBar) {
