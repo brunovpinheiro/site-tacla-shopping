@@ -338,7 +338,7 @@ if (featuresComponent && typeof gsap !== "undefined" && typeof ScrollTrigger !==
 	const featureImages = Array.from(featuresComponent.querySelectorAll(".feature-images_item"));
 
 	if (featureItems.length) {
-		const DURATION = 8;
+		const DURATION = 16;
 		let currentIndex = 0;
 		let progressTween = null;
 		let isStarted = false;
